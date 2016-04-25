@@ -3,7 +3,7 @@
 React [higher-order component](https://gist.github.com/sebmarkbage/ef0bf1f338a7182b6775) to get dimensions of container
 
 
-### `Dimensions([options])`
+### `Dimensions([options], [options.getHeight], [options.getWidth], [options.alwaysRender], [options.throwErrors])`
 
 Wraps a react component and adds properties `containerHeight` and
 `containerWidth`. Useful for responsive design. Properties update on
@@ -19,11 +19,14 @@ v1.0.0 is for React v0.14 only. Use ^0.1.0 for React v0.13
 
 ### Parameters
 
-| parameter             | type     | description                                                                                                                         |
-| --------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `[options]`           | object   | _optional:_ Options                                                                                                                 |
-| `[options.getHeight]` | function | _optional:_ `getHeight(element)` should return element height, where element is the wrapper div. Defaults to `element.clientHeight` |
-| `[options.getWidth]`  | function | _optional:_ `getWidth(element)` should return element width, where element is the wrapper div. Defaults to `element.clientWidth`    |
+| parameter                | type     | description                                                                                                                                                             |
+| ------------------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[options]`              | object   | _optional:_ Options                                                                                                                                                     |
+| `[options.getHeight]`    | function | _optional:_ `getHeight(element)` should return element height, where element is the wrapper div. Defaults to `element.clientHeight`                                     |
+| `[options.getWidth]`     | function | _optional:_ `getWidth(element)` should return element width, where element is the wrapper div. Defaults to `element.clientWidth`                                        |
+| `[options.alwaysRender]` | boolean  | _optional:_ When `true`, always render the composed component, even if no width/height have been found yet, including
+before `componentDidMount()`. Defaults to `false` |
+| `[options.throwErrors]`  | boolean  | _optional:_ Throw an error when we can't find the container whose dimensions to measure. Defaults to `true`                                                             |
 
 
 ### Example
@@ -34,14 +37,13 @@ import React from 'react'
 import Dimensions from 'react-dimensions'
 
 class MyComponent extends React.Component {
-  render() {
-    return (
-      <div 
-        containerWidth={ this.props.containerWidth } 
-        containerHeight={ this.props.containerHeight }>
-      </div>
-      )
-  }
+  render() (
+    <div
+      containerWidth={this.props.containerWidth}
+      containerHeight={this.props.containerHeight}
+    >
+    </div>
+  )
 }
 
 export default Dimensions()(MyComponent) // Enhanced component
@@ -54,15 +56,14 @@ var React = require('react')
 var Dimensions = require('react-dimensions')
 
 var MyComponent = React.createClass({
-  render: function() {
-    return (
-      <div 
-        containerWidth={ this.props.containerWidth } 
-        containerHeight={ this.props.containerHeight }>
-      </div>
-      );
-  }
-})
+  render: function() {(
+    <div
+      containerWidth={this.props.containerWidth}
+      containerHeight={this.props.containerHeight}
+    >
+    </div>
+  )}
+}
 
 module.exports = Dimensions()(MyComponent) // Enhanced component
 ```
@@ -89,5 +90,3 @@ $ npm install react-dimensions
 ```sh
 $ npm test
 ```
-
-

@@ -33,6 +33,11 @@ function defaultGetHeight (element) {
  * height, where element is the wrapper div. Defaults to `element.clientHeight`
  * @param {function} [options.getWidth]  `getWidth(element)` should return element
  * width, where element is the wrapper div. Defaults to `element.clientWidth`
+ * @param {boolean} [options.alwaysRender]  When `true`, always render
+ * the composed component, even if no width/height have been found yet, including
+ * before `componentDidMount()`. Defaults to `false`
+ * @param {boolean} [options.throwErrors]  Throw an error when we can't find the container
+ * whose dimensions to measure. Defaults to `true`
  * @return {function}                   Returns a higher-order component that can be
  * used to enhance a react component `Dimensions()(MyComponent)`
  *
@@ -77,19 +82,26 @@ function defaultGetHeight (element) {
  * module.exports = Dimensions()(MyComponent) // Enhanced component
  *
  */
-export default function Dimensions ({ getHeight = defaultGetHeight, getWidth = defaultGetWidth } = {}) {
+export default function Dimensions ({ getHeight = defaultGetHeight, getWidth = defaultGetWidth, alwaysRender = false, throwErrors = true } = {}) {
   return (ComposedComponent) => {
     return class DimensionsHOC extends React.Component {
       // ES7 Class properties
       // http://babeljs.io/blog/2015/06/07/react-on-es6-plus/#property-initializers
-      state = {}
+      state = {
+        containerWidth: null,
+        containerHeight: null
+      }
 
       // Using arrow functions and ES7 Class properties to autobind
       // http://babeljs.io/blog/2015/06/07/react-on-es6-plus/#arrow-functions
       updateDimensions = () => {
         const container = this.refs.container
         if (!container) {
-          throw new Error('Cannot find container div')
+          if (throwErrors) {
+            throw new Error('Cannot find container div')
+          } else {
+            return
+          }
         }
         this.setState({
           containerWidth: getWidth(container),
@@ -121,7 +133,7 @@ export default function Dimensions ({ getHeight = defaultGetHeight, getWidth = d
       render () {
         return (
           <div style={style} ref='container'>
-            {(this.state.containerWidth || this.state.containerHeight) &&
+            {(alwaysRender || this.state.containerWidth || this.state.containerHeight) &&
              <ComposedComponent {...this.state} {...this.props} updateDimensions={this.updateDimensions}/>}
           </div>
         )
